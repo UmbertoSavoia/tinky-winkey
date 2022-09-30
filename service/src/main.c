@@ -75,13 +75,19 @@ int		stop(SC_HANDLE hSCManager)
 
 int		delete(SC_HANDLE hSCManager)
 {
-	SC_HANDLE hService = OpenService(hSCManager, SVCNAME, DELETE);
+	SERVICE_STATUS sStatus = { 0 };
+	SC_HANDLE hService = OpenService(hSCManager, SVCNAME, SERVICE_ALL_ACCESS);
 
 	if (!hService) {
 		char* messageBuffer = getMessageError(GetLastError());
 		printf("Delete OpenService: Error: %s\n", messageBuffer);
 		LocalFree(messageBuffer);
 		return 1;
+	}
+	QueryServiceStatus(hService, &sStatus);
+	if (sStatus.dwCurrentState != SERVICE_STOPPED) {
+		CloseServiceHandle(hService);
+		return printf("Service {%s} started, you can't delete it\n", SVCNAME);
 	}
 	if (!DeleteService(hService)) {
 		char* messageBuffer = getMessageError(GetLastError());
@@ -101,9 +107,6 @@ int		main(int ac, char **av)
 	size_t func_len_opt[26] = { [1] = 7, [9] = 5, [15] = 4, [20] = 6 };
 	char* p = 0;
 
-	/*if (ac != 2)
-		return usage();*/
-
 	if (ac == 1 && confService() < 0) {
 		char* messageBuffer = getMessageError(GetLastError());
 		printf("Error confService: %s\n", messageBuffer);
@@ -121,6 +124,8 @@ int		main(int ac, char **av)
 	p = strstr(opt, av[1]);
 	if (p && (p - opt) < 26 && (strlen(av[1]) == func_len_opt[p - opt])) {
 		func_opt[p - opt](hSCManager);
+	} else {
+		usage();
 	}
 	CloseServiceHandle(hSCManager);
 }
