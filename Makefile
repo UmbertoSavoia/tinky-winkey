@@ -2,16 +2,19 @@ TARGET_SERVICE = svc.exe
 TARGET_KEYLOGGER = winkey.exe
 
 CC = cl
+CFLAGS = /Wall /WX
 LINK = link
 
-SRC_SERVICE = .\service\src\main.c
+SRC_SERVICE = .\service\src\main.c \
+              .\service\src\service.c \
+              .\service\src\utility.c
 SRC_KEYLOGGER = .\keylogger\src\main.c
 
 OBJ_SERVICE = $(SRC_SERVICE:.c=.obj)
 OBJ_KEYLOGGER = $(SRC_KEYLOGGER:.c=.obj)
 
 .c.obj:
-	$(CC) /nologo /c $< /Fo: $@
+	$(CC) $(CFLAGS) /nologo /I./keylogger/include /I./service/include /c $< /Fo: $@
 
 all: $(TARGET_SERVICE) $(TARGET_KEYLOGGER)
 
