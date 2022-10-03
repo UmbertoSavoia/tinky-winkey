@@ -2,7 +2,7 @@
 
 int		usage(void)
 {
-	puts("Usage: .\\svc.exe [ install | start | stop | delete ]");
+	puts("Usage: .\\svc.exe [ install | start | stop | delete | update ]");
 	return 1;
 }
 
