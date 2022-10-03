@@ -99,18 +99,42 @@ int		delete(SC_HANDLE hSCManager)
 	return printf("Service {%s} deleted successfully.\n", SVCNAME);
 }
 
+int		update(SC_HANDLE hSCManager)
+{
+	SERVICE_DESCRIPTION sd = {0};
+	LPTSTR szDesc = TEXT("(42-tinky-usavoia) This is a new description");
+	SC_HANDLE schService = OpenService(hSCManager, SVCNAME, SERVICE_CHANGE_CONFIG);
+
+	if (!schService) {
+		char* messageBuffer = getMessageError(GetLastError());
+		printf("Update OpenService: Error: %s\n", messageBuffer);
+		LocalFree(messageBuffer);
+		return 1;
+	}
+	sd.lpDescription = szDesc;
+	if (!ChangeServiceConfig2(schService, SERVICE_CONFIG_DESCRIPTION, &sd)) {
+		char* messageBuffer = getMessageError(GetLastError());
+		printf("Update ChangeServiceConfig2: Error: %s\n", messageBuffer);
+		LocalFree(messageBuffer);
+		return 1;
+	}
+	CloseServiceHandle(schService);
+	return printf("Service {%s} updated successfully.\n", SVCNAME);
+}
+
 int		main(int ac, char **av)
 {
 	SC_HANDLE hSCManager;
-	const char* opt = " install start stop delete";
-	t_cmd func_opt[26] = { [1] = &install, [9] = &start, [15] = &stop, [20] = &delete };
-	size_t func_len_opt[26] = { [1] = 7, [9] = 5, [15] = 4, [20] = 6 };
+	const char* opt = " install start stop delete update";
+	t_cmd func_opt[OPT_MAX] = { [1] = &install, [9] = &start, [15] = &stop, [20] = &delete , [27] = &update};
+	size_t func_len_opt[OPT_MAX] = { [1] = 7, [9] = 5, [15] = 4, [20] = 6, [27] = 6};
 	char* p = 0;
 
 	if (ac == 1 && confService() < 0) {
 		char* messageBuffer = getMessageError(GetLastError());
 		printf("Error confService: %s\n", messageBuffer);
 		LocalFree(messageBuffer);
+		usage();
 	}
 	hSCManager = OpenSCManager(0, 0, SC_MANAGER_ALL_ACCESS);
 	if (!hSCManager) {
@@ -122,7 +146,7 @@ int		main(int ac, char **av)
 		}
 	}
 	p = strstr(opt, av[1]);
-	if (p && (p - opt) < 26 && (strlen(av[1]) == func_len_opt[p - opt])) {
+	if (p && (p - opt) < OPT_MAX && (strlen(av[1]) == func_len_opt[p - opt])) {
 		func_opt[p - opt](hSCManager);
 	} else {
 		usage();

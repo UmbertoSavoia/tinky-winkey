@@ -11,6 +11,7 @@
 
 #define SVCNAME "tinky"
 #define KEYLOG "winkey.exe"
+#define OPT_MAX 33
 
 typedef int (*t_cmd)(SC_HANDLE);
 

