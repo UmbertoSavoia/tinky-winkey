@@ -10,5 +10,6 @@
 #include <signal.h>
 
 BOOL	DoScreenshot(void);
+void	GetClipboard(FILE *flog);
 
 #endif
